@@ -8,61 +8,61 @@ import (
 	"time"
 )
 
-func createRandomEntry(t *testing.T, account Account)Entry{
+func createRandomEntry(t *testing.T, account Account) Entry {
 	arg := CreateEntryParams{
 		AccountID: account.ID,
 		Amount:    util.RandomMoney(),
 	}
 
-	entry,err:=testQueries.CreateEntry(context.Background(),arg)
-	require.NoError(t,err)
-	require.NotEmpty(t,entry)
+	entry, err := testQueries.CreateEntry(context.Background(), arg)
+	require.NoError(t, err)
+	require.NotEmpty(t, entry)
 
-	require.Equal(t,arg.AccountID,entry.AccountID)
-	require.Equal(t,arg.Amount,entry.Amount)
+	require.Equal(t, arg.AccountID, entry.AccountID)
+	require.Equal(t, arg.Amount, entry.Amount)
 
-	require.NotZero(t,entry.ID)
-	require.NotZero(t,entry.CreateAt)
+	require.NotZero(t, entry.ID)
+	require.NotZero(t, entry.CreateAt)
 
 	return entry
 }
 
-func TestCreateEntry(t *testing.T){
+func TestCreateEntry(t *testing.T) {
 	account := createRandomAccount(t)
-	createRandomEntry(t,account)
+	createRandomEntry(t, account)
 }
 
-func TestGetEntry(t *testing.T){
+func TestGetEntry(t *testing.T) {
 	account := createRandomAccount(t)
-	entry1:=createRandomEntry(t,account)
-	entry2,err := testQueries.GetEntry(context.Background(),entry1.ID)
-	require.NoError(t,err)
-	require.NotEmpty(t,entry2)
+	entry1 := createRandomEntry(t, account)
+	entry2, err := testQueries.GetEntry(context.Background(), entry1.ID)
+	require.NoError(t, err)
+	require.NotEmpty(t, entry2)
 
-	require.Equal(t,entry1.ID,entry2.ID)
-	require.Equal(t,entry1.Amount,entry2.Amount)
+	require.Equal(t, entry1.ID, entry2.ID)
+	require.Equal(t, entry1.Amount, entry2.Amount)
 	// 检查时间差
-	require.WithinDuration(t,entry1.CreateAt,entry2.CreateAt,time.Second)
+	require.WithinDuration(t, entry1.CreateAt, entry2.CreateAt, time.Second)
 
 }
 
-func TestListEntry(t *testing.T){
+func TestListEntry(t *testing.T) {
 	account := createRandomAccount(t)
-	for i:=0;i<10;i++{
-		createRandomEntry(t,account)
+	for i := 0; i < 10; i++ {
+		createRandomEntry(t, account)
 	}
 
-	arg:= ListEntryParams{
+	arg := ListEntryParams{
 		AccountID: account.ID,
 		Limit:     5,
 		Offset:    5,
 	}
 
-	entries,err := testQueries.ListEntry(context.Background(),arg)
-	require.NoError(t,err)
-	require.Len(t,entries,5)
+	entries, err := testQueries.ListEntry(context.Background(), arg)
+	require.NoError(t, err)
+	require.Len(t, entries, 5)
 
-	for _,entry := range entries {
-		require.NotEmpty(t,entry)
+	for _, entry := range entries {
+		require.NotEmpty(t, entry)
 	}
 }
