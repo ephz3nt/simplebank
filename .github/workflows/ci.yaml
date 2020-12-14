@@ -21,18 +21,18 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v2
 
+      - name: Run migrations
+        run: make migrateup
+
       - name: Test
         run: make test
     services:
-      # Label used to access the service container
       postgres:
-        # Docker Hub image
-        image: postgres
-        # Provide the password for postgres
+        image: postgres:13
         env:
-          POSTGRES_USERNAME: root
+          POSTGRES_USER: root
           POSTGRES_PASSWORD: secret
-        # Set health checks to wait until postgres has started
+          POSTGRES_DB: simple_bank
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
