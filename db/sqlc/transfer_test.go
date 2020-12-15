@@ -24,7 +24,7 @@ func createRandomTransfer(t *testing.T, fromAccount, toAccount Account) Transfer
 	require.Equal(t, arg.Amount, transfer.Amount)
 
 	require.NotZero(t, transfer.ID)
-	require.NotZero(t, transfer.CreateAt)
+	require.NotZero(t, transfer.CreatedAt)
 
 	return transfer
 }
@@ -46,7 +46,7 @@ func TestGetTransfer(t *testing.T) {
 	require.Equal(t, transfer1.ToAccountID, transfer2.ToAccountID)
 	require.Equal(t, transfer1.Amount, transfer2.Amount)
 	// 检查时间差
-	require.WithinDuration(t, transfer1.CreateAt, transfer2.CreateAt, time.Second)
+	require.WithinDuration(t, transfer1.CreatedAt, transfer2.CreatedAt, time.Second)
 }
 
 func TestListTransfer(t *testing.T) {
