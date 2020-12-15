@@ -1,18 +1,27 @@
 package main
 
 import (
-	"fmt"
-	"math/rand"
-	"time"
+	"database/sql"
+	"log"
+	"simplebank/api"
+	db "simplebank/db/sqlc"
+	"simplebank/util"
+
+	_ "github.com/lib/pq"
 )
 
-const alphabet = "abcdefghijklmnopqrstuvwxyz"
-
-func init() {
-	rand.Seed(time.Now().UnixNano())
-}
 func main() {
+	config, err := util.LoadConfig(".")
+	if err != nil {
+		log.Fatal("cannot load config: ", err)
+	}
+	conn, err := sql.Open(config.DBDriver, config.DBSource)
+	if err != nil {
+		log.Fatal("cannot connect to db: ", err)
+	}
 
-	k := len(alphabet)
-	fmt.Println(string(alphabet[rand.Intn(k)]))
+	store := db.NewStore(conn)
+	server := api.NewServer(store)
+
+	log.Fatal(server.Start(config.ServerAddress))
 }

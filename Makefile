@@ -14,4 +14,9 @@ test:
 	go test -v -cover ./...
 fmt:
 	go fmt ./...
-.PHONY: postgres createdb dropdb migrateup migratedown sqlc test fmt
+server: fmt
+	go run main.go
+mock:
+	mockgen -package mockdb -destination db/mock/store.go simplebank/db/sqlc Store
+
+.PHONY: postgres createdb dropdb migrateup migratedown sqlc test fmt server mock
